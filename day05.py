@@ -45,8 +45,6 @@ def solve_1(data):
     return m
 
 def solve_2(data):
-    low = float('inf')
-    high = 0
 
     seen = set()
 
@@ -61,16 +59,10 @@ def solve_2(data):
 
 
         id = row * 8 + col
-        low = min(id, low)
-        high = max(high, id)
 
         seen.add(id)
 
-    all_seats = set()
-    for r in range(low, high+1):
-        all_seats.add(r)
-
-    return all_seats - seen
+    return set(range(min(seen), max(seen))) - seen
 
 
 if __name__ == "__main__":
