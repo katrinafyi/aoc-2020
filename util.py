@@ -9,6 +9,15 @@ from itertools import count
 
 import re
 
+class dotdict(dict):
+    def __getattr__(self, name):
+        value = self[name]
+        if isinstance(value, dict):
+            return dotdict(value)
+        return value
+    __setattr__ = dict.__setitem__
+    __delattr__ = dict.__delitem__
+
 def binary_search(test_function, exponent, debug=False):
     """ Returns the largest integer such that test_function(i) is True.
 
