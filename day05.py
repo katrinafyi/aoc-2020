@@ -33,7 +33,7 @@ def solve_1(data):
     m = 0
     for seat in data:
         first, second = seat[:7], seat[-3:]
-        first = first.replace('F', '0').replace('B', '1')
+        first = first.translate(str.maketrans('FB', '01'))
         first = int(first, 2)
         second = second.replace('L', '0').replace('R', '1')
         second = int(second, 2)
