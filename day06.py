@@ -22,17 +22,13 @@ INPUT = 'day06_input.txt' if len(sys.argv) == 1 else sys.argv[1]
 # import numpy as np 
 # import scipy as sp
 
-def parse(lines: List[str]):
-    lines = ''.join(lines).split('\n\n')
-
-    return lines
+parse = parse_by_blank
 
 def solve_1(data):
 
     x = 0
     for group in data:
         q = set()
-        group = group.split('\n')
         for person in group:
             q.update(person)
         x+= len(q)
@@ -43,7 +39,6 @@ def solve_2(data):
     
     x = 0
     for group in data:
-        group = group.split('\n')
         q = set(group[0])
         for person in group[1:]:
             q &= set(person)

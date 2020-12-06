@@ -84,6 +84,9 @@ def chunks(l, n):
     n = max(1, n)
     return [l[i:i+n] for i in range(0, len(l), n)]
 
+def parse_by_blank(lines: List[str]) -> List[List[str]]:
+    return [x.split('\n') for x in ''.join(lines).split('\n\n')]
+
 @lru_cache(maxsize=None)
 def digits(num, output_len=None):
     out = []
