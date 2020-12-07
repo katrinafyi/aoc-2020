@@ -4,8 +4,8 @@ import operator
 from math import gcd
 from functools import lru_cache, reduce
 from collections import namedtuple, defaultdict
-from typing import Tuple, Iterator, Iterable, NamedTuple, List
-from itertools import count
+from typing import Tuple, Iterator, Iterable, NamedTuple, List, TypeVar
+from itertools import combinations_with_replacement, count
 
 import re
 
@@ -111,6 +111,64 @@ def count_freq(obj):
             out[x] = 0
         out[x] += 1
     return out
+
+_sequence_types = (list, dict)
+
+def _find_sequence_type(object):
+    for t in _sequence_types:
+        if isinstance(object, t):
+            return t
+    raise ValueError('unsupported type for sequence: ' + str(type(object)))
+
+def _seq_enumerator(data):
+    if isinstance(data, list):
+        return enumerate(data)
+    elif isinstance(data, dict):
+        return data.items()
+    assert False
+
+_MISSING = object()
+
+def _seq_setter(container, key, /, constructor=None, value=_MISSING):
+    assert constructor is not None or value is not _MISSING
+
+    if isinstance(container, list):
+        # if key >= len(container):
+        value = value if value is not _MISSING else constructor()
+        container.append(value)
+        return value
+        # return container[key]
+    elif isinstance(container, dict):
+        if key not in container:
+            container[key] = value if value is not _MISSING else constructor()
+        return container[key]
+    assert False
+
+def sequence(data):
+    # outer_type = _find_sequence_type(data)
+    # inner_type = _find_sequence_type(next(iter(data)))
+    # print(outer_type, inner_type)
+
+    result = _MISSING
+    inner_type = _MISSING
+    outer_type = _MISSING
+    for ok, ov in _seq_enumerator(data):
+        for ik, iv in _seq_enumerator(ov):
+            if result is _MISSING:
+                outer_type = _find_sequence_type(data)
+                inner_type = _find_sequence_type(ov)
+                result = inner_type()
+            print(result)
+            print(ok, ik, iv)
+            _seq_setter(_seq_setter(result, ik, constructor=outer_type), ok, value=iv)
+
+    print(result)
+    return result
+
+sequence([{'a': 2}, {'a': 3}, {'b': 100}])
+
+sequence({'a': {'b': 100, 'c': 10}})
+
 
 CARDINALS = {
     'N': (0, -1),
