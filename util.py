@@ -133,10 +133,10 @@ def _seq_setter(container, key, /, constructor=None, value=_MISSING):
     assert constructor is not None or value is not _MISSING
 
     if isinstance(container, list):
-        # if key >= len(container):
-        value = value if value is not _MISSING else constructor()
-        container.append(value)
-        return value
+        while key >= len(container):
+            value = value if value is not _MISSING else constructor()
+            container.append(value)
+        return container[key]
         # return container[key]
     elif isinstance(container, dict):
         if key not in container:
@@ -158,6 +158,7 @@ def sequence(data):
                 outer_type = _find_sequence_type(data)
                 inner_type = _find_sequence_type(ov)
                 result = inner_type()
+
             print(result)
             print(ok, ik, iv)
             _seq_setter(_seq_setter(result, ik, constructor=outer_type), ok, value=iv)
@@ -168,6 +169,10 @@ def sequence(data):
 sequence([{'a': 2}, {'a': 3}, {'b': 100}])
 
 sequence({'a': {'b': 100, 'c': 10}})
+
+sequence({'a': [1, 2, 3], 'b': [4, 5, 6, 7]})
+
+sequence([[1, 2], ['a', 'b', 'c', 'c']]) # broken
 
 
 CARDINALS = {
