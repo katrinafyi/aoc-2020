@@ -166,13 +166,13 @@ def sequence(data):
     print(result)
     return result
 
-sequence([{'a': 2}, {'a': 3}, {'b': 100}])
+# sequence([{'a': 2}, {'a': 3}, {'b': 100}])
 
-sequence({'a': {'b': 100, 'c': 10}})
+# sequence({'a': {'b': 100, 'c': 10}})
 
-sequence({'a': [1, 2, 3], 'b': [4, 5, 6, 7]})
+# sequence({'a': [1, 2, 3], 'b': [4, 5, 6, 7]})
 
-sequence([[1, 2], ['a', 'b', 'c', 'c']]) # broken
+# sequence([['a', 'b', 'c', 'c'], [1, 2], [100, 200, 300]]) # broken
 
 
 CARDINALS = {
