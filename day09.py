@@ -53,28 +53,12 @@ def solve_2(data):
     for num in data:
         prefixes.append(prefixes[-1] + num)
 
-
-    b = 0
     for start in range(len(data) + 1):
         for end in range(len(data) + 1):
             if prefixes[end] - prefixes[start] == target:
-                print(start, end)
-                b = 1
-                break
-        if b: break
-
-    s = 0
-    n = set()
-    for x in range(start, end):
-        s += data[x]
-        n.add(data[x])
-
-    print(s)
-    print(target)
-
-    return min(n) + max(n)
-
-    
+                nums = data[start:end]
+                a, b = min(nums), max(nums)
+                print(start, end, a+b)
 
 if __name__ == "__main__":
     with open(INPUT) as f:
