@@ -105,32 +105,55 @@ def solve_1(data):
     return sum(sum(x == OCCUPIED for x in row) for row in new_state)
 
 from sortedcontainers import sorteddict, sortedlist
+from functools import lru_cache
 
 def solve_2(data):
 
-    row_seats = defaultdict(sortedlist.SortedList)
-    col_seats = defaultdict(sortedlist.SortedList)
-    dd_seats = defaultdict(sortedlist.SortedList)
-    du_seats = defaultdict(sortedlist.SortedList)
+    non_floor = []
+    neighbours = {}
+    for r in range(len(data)):
+        for c in range(len(data[0])):
+            x = set() 
+            for dr in (-1, 0, 1):
+                for dc in (-1, 0, 1):
+                    if dr == dc == 0: continue
+                    for mul in count(1):
+                        r2 = r+dr*mul
+                        c2 = c+dc*mul
+                        if not (0 <= r2 < len(data) and 0 <= c2< len(data[0])): break
+                        if data[r2][c2] == FLOOR: continue
+                        x.add((r2, c2))
+                        break
+            neighbours[r, c] = x
 
-    def adj(r, c):
-        dd = r + c
-        du = r - c
+            if data[r][c] != FLOOR:
+                non_floor.append((r, c))
 
-        x = 0
-        if row_seats[r]:
-            x += row_seats[r][0] < c
-            x += row_seats[r][-1] > c
-        if col_seats[c]:
-            x += col_seats[c][0] < r
-            x += col_seats[c][-1] > r
-        if du_seats[du]:
-            x += du_seats[du][0] < dd
-            x += du_seats[du][-1] > dd
-        if dd_seats[dd]:
-            x += dd_seats[dd][0] < du
-            x += dd_seats[dd][-1] > du
-        return x
+    # row_seats = defaultdict(sortedlist.SortedList)
+    # col_seats = defaultdict(sortedlist.SortedList)
+    # dd_seats = defaultdict(sortedlist.SortedList)
+    # du_seats = defaultdict(sortedlist.SortedList)
+
+    # def adj(r, c):
+    #     dd = r + c
+    #     du = r - c
+
+    #     x = 0
+    #     if row_seats[r]:
+    #         x += row_seats[r][0] < c
+    #         x += row_seats[r][-1] > c
+    #     if col_seats[c]:
+    #         x += col_seats[c][0] < r
+    #         x += col_seats[c][-1] > r
+    #     if du_seats[du]:
+    #         x += du_seats[du][0] < dd
+    #         x += du_seats[du][-1] > dd
+    #     if dd_seats[dd]:
+    #         x += dd_seats[dd][0] < du
+    #         x += dd_seats[dd][-1] > du
+    #     return x
+
+    num_adjacent = defaultdict(int)
 
     while True:
         # a, b, c2, d = row_seats, col_seats, dd_seats, du_seats
@@ -138,30 +161,34 @@ def solve_2(data):
         new_occupied = []
         new_empty = []
 
-        for r in range(len(data)):
-            for c in range(len(data[0])):
-                old = data[r][c]
-                if old == FLOOR: continue
+        for r, c in non_floor:
+            old = data[r][c]
+            if old == FLOOR: continue
 
-                new = old
-                if old == EMPTY:
-                    if count_adjacent(data, r, c) == 0:
-                        new = OCCUPIED
-                elif old == OCCUPIED:
-                    if count_adjacent(data, r, c) >= 5:
-                        new = EMPTY
+            new = old
+            adj = num_adjacent[(r, c)]
+            if old == EMPTY:
+                if adj == 0:
+                    new = OCCUPIED
+            elif old == OCCUPIED:
+                if adj >= 5:
+                    new = EMPTY
 
-                if new != old: 
-                    if new == OCCUPIED:
-                        new_occupied.append((r, c))
-                    else:
-                        new_empty.append((r, c))
+            if new != old: 
+                if new == OCCUPIED:
+                    new_occupied.append((r, c))
+                else:
+                    new_empty.append((r, c))
 
         for r, c in new_empty:
             data[r][c] = EMPTY
+            for x in neighbours[r, c]:
+                num_adjacent[x] -= 1
 
         for r, c in new_occupied:
             data[r][c] = OCCUPIED
+            for x in neighbours[r, c]:
+                num_adjacent[x] += 1
 
         # print('---')
         # for row in row_seats.values():
