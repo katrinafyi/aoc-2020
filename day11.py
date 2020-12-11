@@ -59,13 +59,16 @@ def count_adjacent(seats, r, c):
     for dr in (-1, 0, 1):
         for dc in (-1, 0, 1):
             if dr == dc == 0: continue
-            for mul in count():
+            for mul in count(1):
                 r2 = r+dr*mul
                 c2 = c+dc*mul
                 if not (0 <= r2 < len(seats) and 0 <= c2< len(seats[0])): break
                 if seats[r2][c2] == OCCUPIED:
                     x += 1
                     break
+                if seats[r2][c2] == EMPTY:
+                    break
+    # print(r, c, x)
     return x
 
 from copy import deepcopy
@@ -104,8 +107,6 @@ def solve_1(data):
 from sortedcontainers import sorteddict, sortedlist
 
 def solve_2(data):
-    
-
 
     row_seats = defaultdict(sortedlist.SortedList)
     col_seats = defaultdict(sortedlist.SortedList)
@@ -132,69 +133,55 @@ def solve_2(data):
         return x
 
     while True:
-        a, b, c2, d = row_seats, col_seats, dd_seats, du_seats
+        # a, b, c2, d = row_seats, col_seats, dd_seats, du_seats
 
         new_occupied = []
         new_empty = []
 
         for r in range(len(data)):
             for c in range(len(data[0])):
-                if data[r][c] == FLOOR: continue
-                occ = c in row_seats[r]
-                old = OCCUPIED if occ else EMPTY
+                old = data[r][c]
+                if old == FLOOR: continue
 
+                new = old
                 if old == EMPTY:
-                    if adj(r, c) == 0:
+                    if count_adjacent(data, r, c) == 0:
                         new = OCCUPIED
-                    else:
+                elif old == OCCUPIED:
+                    if count_adjacent(data, r, c) >= 5:
                         new = EMPTY
-                else:
-                    if adj( r, c) >= 5:
-                        new = EMPTY
-                    else:
-                        new = OCCUPIED
 
                 if new != old: 
                     if new == OCCUPIED:
                         new_occupied.append((r, c))
                     else:
                         new_empty.append((r, c))
-        print(new_occupied)
-        print(new_empty)
+
         for r, c in new_empty:
-            dd = r + c
-            du = r - c
-            a[r].remove(c)
-            b[c].remove(r)
-            c2[dd].remove(du)
-            d[du].remove(dd)
+            data[r][c] = EMPTY
 
         for r, c in new_occupied:
-            dd = r + c
-            du = r - c
-            a[r].add(c)
-            b[c].add(r)
-            c2[dd].add(du)
-            d[du].add(dd)
+            data[r][c] = OCCUPIED
 
-        print('---')
-        for row in row_seats.values():
-            x = [' ']*len(data[0])
-            for i in row:
-                x[i] = '#'
-            print(''.join(x))
+        # print('---')
+        # for row in row_seats.values():
+        #     x = [' ']*len(data[0])
+        #     for i in row:
+        #         x[i] = '#'
+        #     print(''.join(x))
+        # for row in data:
+        #     print(''.join(row))
+        # input()
 
         if not new_occupied and not new_empty:
             break
 
-    print(row_seats)
-    print(col_seats)
-    print(dd_seats)
-    print(du_seats)
+    # print(row_seats)
+    # print(col_seats)
+    # print(dd_seats)
+    # print(du_seats)
 
-    x = 0
-    for row in row_seats.values():
-        x += len(row)
+    return sum(x == OCCUPIED for row in data for x in row)
 
     print(sum(len(y) for y in col_seats.values()    ))
     print(sum(len(y) for y in dd_seats.values()    ))
