@@ -39,18 +39,16 @@ def solve_1(data):
     dir = co.E
     for action, dist in data:
         if action in 'NESW':
-            pos += co.direction_map[action] * dist
+            pos += co.LETTER_TO_COORD[action] * dist
         elif action in 'LR':
-            assert dist % 90 == 0
-            for i in range(dist // 90):
-                f = co.turn_left if action == 'L' else co.turn_right
-                dir = f(dir)
+            if action == 'R': dist *= -1
+            dir = co.turn(dir, dist)
         elif action == 'F':
             pos += dist * dir
         else:
             assert 0
     
-    return (co.cityblock_distance(pos))
+    return (co.ell1_norm(pos))
 
 
 def solve_2(data): 
@@ -58,18 +56,16 @@ def solve_2(data):
     pos = co.ORIGIN
     for action, dist in data:
         if action in 'NESW':
-            waypoint += co.direction_map[action] * dist
+            waypoint += co.LETTER_TO_COORD[action] * dist
         elif action in 'LR':
-            assert dist % 90 == 0
-            for i in range(dist // 90):
-                f = co.turn_left if action == 'L' else co.turn_right
-                waypoint = f(waypoint)
+            if action == 'R': dist *= -1
+            waypoint = co.turn(waypoint, dist)
         elif action == 'F':
             pos += dist * waypoint
         else:
             assert 0
     
-    return (co.cityblock_distance(pos))
+    return (co.ell1_norm(pos))
 
 
 if __name__ == "__main__":

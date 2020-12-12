@@ -13,35 +13,42 @@ import cmath
 from math import degrees, radians
 
 ORIGIN = 0 + 0j
-CARDINALS = SIDES = N, S, E, W = 1j, -1j, 1, -1
+CARDINALS = SHIFTS = SIDES = N, S, E, W = 1j, -1j, 1, -1
 DIAGONALS = NE, SE, SW, NW = (N + E), (S + E), (S + W), (N + W)
 
 DIRECTIONS = CARDINALS + DIAGONALS
 
-name_map = dict(zip(
+COORD_TO_LETTER = dict(zip(
     (N, S, E, W, NE, SE, SW, NW), 
     ('N', 'S', 'E', 'W', 'NE', 'SE', 'SW', 'NW')
 ))
-direction_map = {v: k for k, v in name_map.items()}
+LETTER_TO_COORD = {v: k for k, v in COORD_TO_LETTER.items()}
 
 def adjacents(c): 
     return [ c + i for i in CARDINALS ]
 def adjacents_8(c): 
     return [ c + i for i in DIRECTIONS ]
+neighbours = adjacents 
+neighbours_8 = adjacents_8
 def turn_left(c): 
     return c * 1j
 def turn_right(c): 
     return c * -1j
 def turn_around(c): 
     return c * -1
+def turn(c, deg):
+    return c * from_angle(deg)
+
+rotate_left = turn_left
+rotate_right = turn_right 
+rotate = turn
 
 _sorted_cardinals = (E, N, W, S)
 def to_angle(c):
     return round(degrees(cmath.phase(c)))
 def from_angle(d):
-    assert d % 90 == 0
-    return _sorted_cardinals[(d // 90) % 4]
-def from_angle_imprecise(d):
+    if d % 90 == 0:
+        return _sorted_cardinals[(d // 90) % 4]
     return cmath.rect(1, radians(d))
 
 def to_pos(c):
@@ -54,5 +61,8 @@ def from_pos(pos, snd=None):
 
     return complex(x, -y)
 
-def cityblock_distance(c): 
+def ell1_norm(c): 
     return abs(c.real) + abs(c.imag)
+manhattan_norm = ell1_norm
+def euclidean_norm(c):
+    return abs(c)
