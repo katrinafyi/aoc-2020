@@ -10,6 +10,7 @@ from itertools import combinations_with_replacement, count
 import re
 
 INT_MAX = INF = float('inf')
+INT_MIN = NEG_INF = float('-inf')
 
 class dotdict(dict):
     def __getattr__(self, name):
