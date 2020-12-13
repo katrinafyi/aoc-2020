@@ -84,6 +84,16 @@ def solve_2(data):
     ''' 
     return
 
+def solve_2(data):
+    _, buses = data  
+    d = 1
+    x = 1
+    for i, b in enumerate(buses):
+        if not b: continue
+        while x % b != (-i) % b:
+            x += d
+        d = lcm(d, b)
+    return (x)
 
 
 if __name__ == "__main__":
