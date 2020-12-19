@@ -65,10 +65,8 @@ def count_satisfied(rules, texts):
 
     x = 0 
     for t in texts:
-        for sat in satisfies(0, t):
-            if sat == len(t):
-                x += 1
-                break
+        if len(t) in satisfies(0, t):
+            x += 1
     return x 
 
 
