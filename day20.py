@@ -74,7 +74,7 @@ class EdgeData:
 
     def rotate(self, n=1):
         e = self
-        e.top, e.left, e.bottom, e.right = e.right, e.top, e.left, e.bottom
+        e.top, e.left, e.bottom, e.right = e.right, e.top[::-1], e.left, e.bottom[::-1]
         if n > 1:
             self.rotate(n-1)
     
@@ -136,7 +136,6 @@ def solve_1(data):
                 edges_to_permutations[getattr(perm, side)].append((side, perm.copy()))
 
     t, td = next(iter(edges.items()))
-    banned = set()
 
     # print(edges_to_permutations)
     tile_map = {} 
@@ -155,7 +154,10 @@ def solve_1(data):
         for adj, this_side in zip(neighbours(pos), ['top', 'bottom', 'left', 'right']):
             if adj in tile_map: continue
             # print(this_side, getattr(this_data, this_side))
-            possible = edges_to_permutations[getattr(this_perm, this_side)]
+            this_side_pattern = getattr(this_perm, this_side)
+            # if this_side == 'left' or this_side == 'right':
+            #     this_side_pattern = this_side_pattern[::-1]
+            possible = edges_to_permutations[this_side_pattern]
             # print(adj, this_side, possible)
             for side, perm in possible:
                 if perm.id in used: continue
@@ -166,23 +168,20 @@ def solve_1(data):
                     new_map[adj] = perm 
                     q.append((adj, new_map, used | {perm.id}))
 
-        if not continuing:
-            solutions.append(tile_map)
-
-    for tile_map in solutions:
-        min_x  = min(x[0] for x in tile_map)
-        max_x  = max(x[0] for x in tile_map)
-        min_y  = min(x[1] for x in tile_map)
-        max_y  = max(x[1] for x in tile_map)
-        xs = max_x - min_x + 1
-        ys = max_y - min_y + 1
-        # if xs == ys and len(tile_map) == xs * ys:
-        #     # print('non square', len(tile_map))
-        print()
-            # print(tile_map)
-        for y in range(min_y, max_y + 1):
-            print([tile_map[x,y].id if (x,y) in tile_map else None 
-                for x in range(min_x, max_x + 1)])
+        if not continuing and len(tile_map) == len(edges):
+            min_x  = min(x[0] for x in tile_map)
+            max_x  = max(x[0] for x in tile_map)
+            min_y  = min(x[1] for x in tile_map)
+            max_y  = max(x[1] for x in tile_map)
+            xs = max_x - min_x + 1
+            ys = max_y - min_y + 1
+            if xs == ys and len(tile_map) == xs * ys:
+                pass
+            #     # print('non square', len(tile_map))
+            print()
+            for y in range(min_y, max_y + 1):
+                print([tile_map[x,y].id if (x,y) in tile_map else None 
+                    for x in range(min_x, max_x + 1)])
 
     # print(set(tile_map))
     # print(tile_map)
