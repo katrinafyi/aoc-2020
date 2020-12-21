@@ -4,7 +4,7 @@ import operator
 from math import gcd
 from functools import lru_cache, reduce
 from collections import namedtuple, defaultdict
-from typing import Tuple, Iterator, Iterable, NamedTuple, List, TypeVar
+from typing import Dict, Tuple, Iterator, Iterable, NamedTuple, List, TypeVar
 from itertools import combinations_with_replacement, count
 
 import re
@@ -20,6 +20,18 @@ class dotdict(dict):
         return value
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
+
+T = TypeVar('T')
+U = TypeVar('U')
+
+def just(i: Iterable[T]) -> T:
+    return next(iter(i))
+
+def just_dict(d: Dict[T, Iterable[U]]):
+    for k, v in d.items():
+        d[k] = just(v)
+    return d
+
 
 def binary_search(test_function, exponent, debug=False):
     """ Returns the largest integer such that test_function(i) is True.
