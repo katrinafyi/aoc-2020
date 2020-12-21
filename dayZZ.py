@@ -23,18 +23,21 @@ INPUT = 'dayXX_input.txt' if len(sys.argv) == 1 else sys.argv[1]
 # import scipy as sp
 
 def parse(lines: List[str]):
-    pass
+    return
 
-def solve_1(data):
-    pass 
+def process(data):
+    return
 
-def solve_2(data):
-    pass 
+def solve_1(data, extra):
+    return
+
+def solve_2(data, extra):
+    return 
 
 if __name__ == "__main__":
     with open(INPUT) as f:
         data = parse(f.readlines())
-        print('sol 1:', solve_1(data))
+        extra = process(data)
+        print('sol 1:', solve_1(data, extra))
         print()
-        f.seek(0)
-        print('sol 2:', solve_2(data))
+        print('sol 2:', solve_2(data, extra))
