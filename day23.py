@@ -23,7 +23,7 @@ INPUT = 'day23_input.txt' if len(sys.argv) == 1 else sys.argv[1]
 # import scipy as sp
 
 def parse(lines: List[str]):
-    return deque(lmap(int, lines[0]))
+    return deque(lmap(int, lines[0].strip()))
 
 def process(data):
     return
@@ -66,24 +66,20 @@ def solve_1(data, extra):
 class Node:
     value: None = None
     next: None = None
-    prev: None = None
 
     def insert_right(self, value):
-        self.next = Node(value, self.next, self)
+        self.next = Node(value, self.next)
         return self.next
 
     def link_right(self, right):
-        self.next.prev = right
         right.next = self.next
-        right.prev = self
         self.next = right
 
     def unlink_right(self):
         right = self.next
-        right.next.prev = self
         self.next = right.next
         
-        right.prev = right.next = None
+        right.next = None
         return right
 
     @classmethod
@@ -93,7 +89,6 @@ class Node:
         for x in items:
             current = current.insert_right(x)
         head = head.next 
-        head.prev = None
         return head, current
 
     def __repr__(self):
@@ -122,7 +117,6 @@ def solve_2(data, extra):
     print('list made')
 
     tail.next = head 
-    head.prev = tail
 
     num_to_node = [None]*(1+million)
     c = head
@@ -136,7 +130,7 @@ def solve_2(data, extra):
     print('dict made')
 
     cur = head
-    limit = 10*million
+    limit = 10 * million
     for i in range(limit):
         # print(cur)
         if i % 100000 == 0: print(i / limit)
@@ -147,7 +141,7 @@ def solve_2(data, extra):
         three = []
         for x in range(3):
             three.append(cur.unlink_right())
-        three_vals = tuple(x.value for x in three)
+        three_vals = [x.value for x in three]
 
         target = c - 1
         while target < low or target in three_vals:
@@ -161,12 +155,12 @@ def solve_2(data, extra):
 
         cur = cur.next
 
-    #print(cups)
+    # print(cur)
+    # print(cur)
     c = num_to_node[1]
     a, b = c.next.value, c.next.next.value
     print(a, b)
     print(a*b)
-    # print(cur)
 
 if __name__ == "__main__":
     with open(INPUT) as f:
