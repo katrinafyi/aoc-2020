@@ -62,64 +62,111 @@ def solve_1(data, extra):
     #print(cups)
     print(cups)
 
+@dataclass
+class Node:
+    value: None = None
+    next: None = None
+    prev: None = None
+
+    def insert_right(self, value):
+        self.next = Node(value, self.next, self)
+        return self.next
+
+    def link_right(self, right):
+        self.next.prev = right
+        right.next = self.next
+        right.prev = self
+        self.next = right
+
+    def unlink_right(self):
+        right = self.next
+        right.next.prev = self
+        self.next = right.next
+        
+        right.prev = right.next = None
+        return right
+
+    @classmethod
+    def from_list(cls, items):
+        head = cls()
+        current = head
+        for x in items:
+            current = current.insert_right(x)
+        head = head.next 
+        head.prev = None
+        return head, current
+
+    def __repr__(self):
+        x = []
+        current = self
+        while current.next:
+            x.append(current.value)
+            current = current.next
+            if current is self: 
+                x.append(...)
+                break
+        return repr(x)
+
+    __str__ = __repr__
 
 def solve_2(data, extra):
     cups = data
     low = min(cups)
     high = max(cups)
-    old_high = high
-    i = high + 1
     million = 1000000
 
-    extra = million - len(cups)
-    while len(cups) < million:
-        cups.append(i)
-        i += 1
+    print(cups)
+    head, tail = Node.from_list(cups)
+    for i in range(high + 1, million + 1):
+        tail = tail.insert_right(i)
+    print('list made')
 
-    high = max(cups)
-    move = 0
-    while move < 10*million:
-        print(move)
-        while cups[0] - 1 == cups[-1]:
-            a = cups.popleft() 
-            b = cups.pop() 
-            cups.append(a)
-            cups.appendleft(b)
-            move += 1
+    tail.next = head 
+    head.prev = tail
 
+    num_to_node = [None]*(1+million)
+    c = head
+    while c is not None:
+        num_to_node[c.value] = c
+        c = c.next
+        if c is head: break
+    print(len(num_to_node))
+    print(tail.value)
+    print(head.value)
+    print('dict made')
+
+    cur = head
+    limit = 10*million
+    for i in range(limit):
+        # print(cur)
+        if i % 100000 == 0: print(i / limit)
         #print(cups)
-        current = cups.popleft()
-        cups.append(current)
-        #print('c', current)
-        three = [cups.popleft() for x in 'aaa']
-        next_current = cups[0]
-        #print(three)
-        target = current - 1
-        while target < low or target in three:
+        # cur at current cup
+        c = cur.value
+
+        three = []
+        for x in range(3):
+            three.append(cur.unlink_right())
+        three_vals = tuple(x.value for x in three)
+
+        target = c - 1
+        while target < low or target in three_vals:
             target -= 1
             if target < low:
                 target = high
-        #print(target)
-        while cups[0] != target:
-            cups.append(cups.popleft())
+        
+        s = num_to_node[target]
+        for x in reversed(three):
+            s.link_right(x)
 
-        # current to end
-        t = cups.popleft() 
-        for x in three[::-1]:
-            cups.appendleft(x)
-        cups.appendleft(t)
-    
-        while cups[0] != next_current:
-            cups.appendleft(cups.pop())
-
-        move += 1 
-
+        cur = cur.next
 
     #print(cups)
-    i = cups.index(1)
-    a, b = cups[i+1], cups[i+2]
+    c = num_to_node[1]
+    a, b = c.next.value, c.next.next.value
     print(a, b)
     print(a*b)
+    # print(cur)
 
 if __name__ == "__main__":
     with open(INPUT) as f:
