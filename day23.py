@@ -117,6 +117,7 @@ def solve_2(data, extra):
     print('list made')
 
     tail.next = head 
+    high = max(high, tail.value)
 
     num_to_node = [None]*(1+million)
     c = head
