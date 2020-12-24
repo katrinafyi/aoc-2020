@@ -40,19 +40,7 @@ DIRECTION = {
 }
 
 def parse_line(line):
-    i = 0
-    o = []
-    while i < len(line):
-        c = line[i]
-        if c in 'ew':
-            x = c
-        elif c in 'sn':
-            c2 = line[i+1]
-            x = c + c2
-            i += 1
-        i += 1
-        o.append(x)
-    return o
+    return line.replace('e', 'e ').replace('w', 'w ').split()
 
 
 def parse(lines: List[str]):
